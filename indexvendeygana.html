@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herramienta de Gestión de Cuentas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #ed7318;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-group button:hover {
+            background-color: #d65f12;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .tab-buttons button {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .tab-buttons button:last-child {
+            margin-right: 0;
+        }
+
+        .agenda-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .agenda-table th,
+        .agenda-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .agenda-table th {
+            background-color: #ed7318;
+            color: white;
+        }
+
+        .agenda-table tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .filter-group {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Herramienta de Gestión de Cuentas</h1>
+        <div class="tab-buttons">
+            <button onclick="showTab('servicios')">Servicios</button>
+            <button onclick="showTab('reporte-fallas')">Reporte de Fallas</button>
+        </div>
+
+        <div id="servicios" class="tab-content">
+            <h2>Gestión de Servicios</h2>
+            <div class="form-group">
+                <label for="servicio-select">Seleccione un Servicio:</label>
+                <select id="servicio-select" onchange="showService(this.value)">
+                    <option value="">Seleccione...</option>
+                    <option value="netflix">Netflix</option>
+                    <option value="amazon">Amazon</option>
+                    <option value="disney">Disney</option>
+                    <option value="max">Max</option>
+                    <option value="panax">PanaxTreaming</option>
+                    <option value="crunchyroll">Crunchyroll</option>
+                    <option value="paramount">Paramount</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="spotify">Spotify</option>
+                    <option value="flujotv">FlujoTV</option>
+                    <option value="canva">Canva</option>
+                </select>
+            </div>
+
+            <div id="service-details" class="hidden">
+                <div class="form-group">
+                    <label for="cuenta">Nombre de la Cuenta:</label>
+                    <input type="text" id="cuenta" placeholder="Ingrese el nombre de la cuenta">
+                </div>
+                <div class="form-group">
+                    <label for="fecha-compra">Fecha de Compra:</label>
+                    <input type="date" id="fecha-compra">
+                </div>
+                <div class="form-group">
+                    <label for="estado">Estado:</label>
+                    <select id="estado">
+                        <option value="disponible">Disponible</option>
+                        <option value="vendida">Vendida</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="correo">Correo:</label>
+                    <input type="email" id="correo" placeholder="Ingrese el correo" oninput="updateStatus()">
+                </div>
+                <div class="form-group">
+                    <button onclick="agregarCuenta()">Agregar Cuenta</button>
+                </div>
+
+                <table class="agenda-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre de la Cuenta</th>
+                            <th>Fecha de Compra</th>
+                            <th>Estado</th>
+                            <th>Correo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuentas-body">
+                        <!-- Las cuentas se agregarán aquí -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="reporte-fallas" class="tab-content">
+            <h2>Reporte de Fallas</h2>
+            <div class="form-group">
+                <label for="falla-cuenta">Nombre de la Cuenta:</label>
+                <input type="text" id="falla-cuenta" placeholder="Ingrese el nombre de la cuenta">
+            </div>
+            <div class="form-group">
+                <label for="falla">Falla:</label>
+                <textarea id="falla" placeholder="Describa la falla"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="correo-comprador">Correo del Comprador:</label>
+                <input type="email" id="correo-comprador" placeholder="Ingrese el correo del comprador">
+            </div>
+            <div class="form-group">
+                <label for="telefono-comprador">Teléfono del Comprador:</label>
+                <input type="text" id="telefono-comprador" placeholder="Ingrese el teléfono del comprador">
+            </div>
+            <div class="form-group">
+                <label for="agente-reclamo">Agente que Atiende el Reclamo:</label>
+                <input type="text" id="agente-reclamo" placeholder="Ingrese el nombre del agente">
+            </div>
+            <div class="form-group">
+                <label for="respuesta-reclamo">Respuesta del Reclamo:</label>
+                <textarea id="respuesta-reclamo" placeholder="Ingrese la respuesta del reclamo" oninput="updateFechaReclamo()"></textarea>
+            </div>
+            <div class="form-group">
+                <button onclick="agregarFalla()">Agregar Falla</button>
+            </div>
+
+            <div class="filter-group">
+                <label for="filtrarFechaFallas">Filtrar por Fecha:</label>
+                <input type="date" id="filtrarFechaFallas" onchange="filtrarFallas()">
+            </div>
+
+            <table class="agenda-table">
+                <thead>
+                    <tr>
